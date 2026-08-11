@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ระบบคลังวิทยานิพนธ์อิเล็กทรอนิกส์ | คณะวิศวกรรมศาสตร์ มมส</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <?!= HtmlService.createHtmlOutputFromFile('Style').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('CSS').getContent(); ?>
+</head>
+<body class="bg-gray-100 text-gray-800 transition-colors duration-300">
+
+
+    <!-- แถบเมนูด้านบน (Header สีเลือดหมู) -->
+    <header class="bg-[#800020] text-white shadow-md border-b-4 border-[#FFD700]">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div class="flex items-center">
+                <div class="flex items-center space-x-2 mr-4 shrink-0">
+                    <img src="https://lh3.googleusercontent.com/d/1446-_bfQy3BFzU273H_MnAQPXkCEpnyb" alt="MSU Logo" class="h-12 sm:h-14 w-auto object-contain p-1 rounded shadow-sm">
+                    <img src="https://lh3.googleusercontent.com/d/1wgV5qkhHCSpF_PxmLpm7Jx8w35NFVT--" alt="Engineering Logo" class="h-12 sm:h-14 w-auto object-contain p-1 rounded shadow-sm">
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-bold tracking-wide">ระบบคลังวิทยานิพนธ์อิเล็กทรอนิกส์</h1>
+                    <p class="text-xs text-gray-300 uppercase tracking-wider">Faculty of Engineering, Mahasarakham University</p>
+                </div>
+            </div>
+
+
+            <!-- ปุ่มเมนูสลับหน้าต่างทำงานแยกจากกันเด็ดขาด -->
+            <div class="flex items-center space-x-2 flex-wrap justify-center gap-y-2">
+                <button onclick="switchTab('main-content-section')" class="bg-[#FFD700] text-gray-950 px-3 py-1.5 rounded text-xs font-bold hover:bg-yellow-500">
+                    <i class="fa-solid fa-house"></i> หน้าหลัก
+                </button>
+                <button onclick="switchTab('submission-view')" class="bg-[#600018] border border-[#FFD700] text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-[#4a0012]">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> ระบบส่งงาน
+                </button>
+                <button onclick="switchTab('admin-view')" class="bg-[#600018] border border-[#FFD700] text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-[#4a0012]">
+                    <i class="fa-solid fa-user-shield"></i> ระบบแอดมิน
+                </button>
+                <button id="themeToggle" class="p-2 rounded-full hover:bg-[#600018] text-[#FFD700] transition-colors shrink-0">
+                    <i class="fa-solid fa-moon text-xl" id="themeIcon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- 1️⃣ หน้าต่างที่ 1: หน้าหลักค้นหาวิจัย (แสดงเป็นหน้าแรกสุด) -->
+    <div id="main-content-section" class="tab-content">
+        <section class="bg-gray-500 py-6 px-4 shadow-inner">
+            <div class="max-w-4xl mx-auto flex shadow-md rounded-lg overflow-hidden">
+                <input type="text" id="searchInput" placeholder="ค้นหาวิทยานิพนธ์ (Search)" class="w-full px-4 py-3 text-gray-900 focus:outline-none text-base border-none">
+                <button class="bg-[#FFB800] hover:bg-[#E5A500] text-gray-950 font-bold px-6 flex items-center space-x-2 transition-colors shrink-0">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span class="hidden sm:inline">ค้นหา</span>
+                </button>
+            </div>
+        </section>
+
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row gap-6">
+                <aside class="w-full md:w-64 shrink-0">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden shadow-sm sticky top-20 filter-box">
+                        <div class="bg-[#800020] text-white px-4 py-3 font-bold flex items-center justify-between">
+                            <span><i class="fa-solid fa-filter mr-2"></i>กรองข้อมูล (FILTER)</span>
+                        </div>
+                        <div class="p-4 space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ระดับปริญญา (Degree)</label>
+                                <select id="degreeFilter" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none">
+                                    <option value="all">-- ทั้งหมด (All) --</option>
+                                    <option value="bachelor">ระดับปริญญาตรี (วศ.บ.)</option>
+                                    <option value="master">ระดับปริญญาโท (วศ.ม.)</option>
+                                    <option value="doctor">ระดับปริญญาเอก (ปร.ด.)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">สาขาวิชา (Department)</label>
+                                <select id="majorFilter" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none"><option value="all">-- ทั้งหมด (All) --</option></select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">ปีที่ตีพิมพ์ (YEAR)</label>
+                                <select id="yearFilter" class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none"><option value="all">-- ทั้งหมด (All) --</option></select>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+
+                <section class="flex-grow">
+                    <h2 class="text-xl font-bold border-b-2 border-gray-300 pb-2 mb-6 flex items-center text-gray-800 dark:text-white"><span class="bg-[#800020] text-white px-3 py-1 rounded-sm text-sm mr-2">RECENT</span>วิทยานิพนธ์ล่าสุด</h2>
+                    <div id="loadingState" class="flex flex-col items-center justify-center py-20 bg-white rounded-lg border border-gray-200">
+                        <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-b-4 border-[#800020] mb-4"></div>
+                        <p class="text-gray-500 text-sm">กำลังโหลดข้อมูลจากฐานข้อมูลคณะวิศวกรรมศาสตร์...</p>
+                    </div>
+                    <div id="emptyState" class="hidden text-center py-20 bg-white rounded-lg border border-gray-200"><i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-4 block"></i><p class="text-gray-500 text-sm">ไม่พบวิทยานิพนธ์ที่ตรงกับเงื่อนไข</p></div>
+                    <div id="thesisGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- 2️⃣ หน้าต่างที่ 2: หน้าระบบส่งงานนิสิตแยกต่างหาก (ซ่อนไว้เริ่มต้น) -->
+    <div id="submission-view" class="tab-content max-w-7xl mx-auto px-4 py-8" style="display: none;">
+        <?!= HtmlService.createHtmlOutputFromFile('Form').getContent(); ?>
+    </div>
+
+
+    <!-- 3️⃣ หน้าต่างที่ 3: หน้าระบบแอดมินหลังบ้านแยกต่างหาก (ซ่อนไว้เริ่มต้น) -->
+    <div id="admin-view" class="tab-content max-w-7xl mx-auto px-4 py-8" style="display: none;">
+        <?!= HtmlService.createHtmlOutputFromFile('Admin').getContent(); ?>
+    </div>
+
+
+    <footer class="bg-gray-200 border-t border-gray-300 py-6 text-center text-xs text-gray-600 transition-colors duration-300">
+        <p>© 2026 Faculty of Engineering, Mahasarakham University. All Rights Reserved.</p>
+    </footer>
+
+
+    <!-- JavaScript สลับหน้าต่างแบบแยกขาด -->
+    <script>
+        function switchTab(tabId) {
+            // ซ่อนทุกหน้าต่างออกไปก่อน
+            document.querySelectorAll('.tab-content').forEach(function(tab) {
+                tab.style.display = 'none';
+            });
+            // เปิดแสดงเฉพาะหน้าต่างที่เลือก
+            document.getElementById(tabId).style.display = 'block';
+           
+            // ถ้ากดเข้าแท็บแอดมิน และฟังก์ชันล็อกอินผ่านแล้ว ให้โหลดข้อมูลมารอตรวจ
+            if(tabId === 'admin-view' && typeof loadPendingSubmissions === 'function') {
+                const adminDashboard = document.getElementById('admin-dashboard-box');
+                if(adminDashboard && adminDashboard.style.display === 'block') {
+                     loadPendingSubmissions();
+                }
+            }
+        }
+
+
+        document.addEventListener('click', function(e) {
+            const anchor = e.target.closest('a');
+            if (anchor && anchor.href && anchor.href.includes('page=flipbook')) {
+                e.preventDefault();
+                window.top.location.href = anchor.href;
+            }
+        });
+    </script>
+    <?!= HtmlService.createHtmlOutputFromFile('Script').getContent(); ?>
+    <?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
+</body>
+</html>
+
